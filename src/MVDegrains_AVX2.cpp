@@ -65,6 +65,7 @@ static void Degrain_avx2(uint8_t *pDst, int nDstPitch, const uint8_t *pSrc, int 
                 refs3 = radius > 1 ? _mm256_cvtepu8_epi16(_mm_unpacklo_epi64(_mm_loadl_epi64((const __m128i *)(pRefs3 + x)), _mm_loadl_epi64((const __m128i *)(pRefs3 + nRefPitches3 + x)))) : zero;
                 refs4 = radius > 2 ? _mm256_cvtepu8_epi16(_mm_unpacklo_epi64(_mm_loadl_epi64((const __m128i *)(pRefs4 + x)), _mm_loadl_epi64((const __m128i *)(pRefs4 + nRefPitches4 + x)))) : zero;
                 refs5 = radius > 2 ? _mm256_cvtepu8_epi16(_mm_unpacklo_epi64(_mm_loadl_epi64((const __m128i *)(pRefs5 + x)), _mm_loadl_epi64((const __m128i *)(pRefs5 + nRefPitches5 + x)))) : zero;
+                // TODO: Update these
             } else {
                 src = _mm256_cvtepu8_epi16(_mm_loadu_si128((const __m128i *)(pSrc + x)));
                 refs0 = _mm256_cvtepu8_epi16(_mm_loadu_si128((const __m128i *)(pRefs0 + x)));
@@ -117,6 +118,7 @@ static void Degrain_avx2(uint8_t *pDst, int nDstPitch, const uint8_t *pSrc, int 
 }
 #endif
 
+//TODO: Update this.
 static const std::unordered_map<uint32_t, DenoiseFunction> degrain_functions[3] = {
     {
         DEGRAIN_AVX2(1, 8, 2)

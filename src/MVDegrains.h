@@ -13,7 +13,13 @@ enum VectorOrder {
     Backward2,
     Forward2,
     Backward3,
-    Forward3
+    Forward3,
+    Backward4,
+    Forward4,
+    Backward5,
+    Forward5,
+    Backward6,
+    Forward6
 };
 
 
@@ -59,6 +65,7 @@ static void Degrain_sse2(uint8_t *pDst, int nDstPitch, const uint8_t *pSrc, int 
 
     __m128i zero = _mm_setzero_si128();
     __m128i wsrc = _mm_set1_epi16(WSrc);
+    // TODO: Update this
     __m128i wrefs[6];
     wrefs[0] = _mm_set1_epi16(WRefs[0]);
     wrefs[1] = _mm_set1_epi16(WRefs[1]);
