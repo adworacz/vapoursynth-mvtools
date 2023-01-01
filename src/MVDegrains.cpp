@@ -96,6 +96,13 @@ static const VSFrameRef *VS_CC mvdegrainGetFrame(int n, int activationReason, vo
     MVDegrainData *d = (MVDegrainData *)*instanceData;
 
     if (activationReason == arInitial) {
+        //TODO: Clean this up to just use a loop.
+        if (radius > 5)
+            vsapi->requestFrameFilter(n, d->vectors[Forward6], frameCtx);
+        if (radius > 4)
+            vsapi->requestFrameFilter(n, d->vectors[Forward5], frameCtx);
+        if (radius > 3)
+            vsapi->requestFrameFilter(n, d->vectors[Forward4], frameCtx);
         if (radius > 2)
             vsapi->requestFrameFilter(n, d->vectors[Forward3], frameCtx);
         if (radius > 1)
@@ -106,6 +113,30 @@ static const VSFrameRef *VS_CC mvdegrainGetFrame(int n, int activationReason, vo
             vsapi->requestFrameFilter(n, d->vectors[Backward2], frameCtx);
         if (radius > 2)
             vsapi->requestFrameFilter(n, d->vectors[Backward3], frameCtx);
+        if (radius > 3)
+            vsapi->requestFrameFilter(n, d->vectors[Backward4], frameCtx);
+        if (radius > 4)
+            vsapi->requestFrameFilter(n, d->vectors[Backward5], frameCtx);
+        if (radius > 5)
+            vsapi->requestFrameFilter(n, d->vectors[Backward6], frameCtx);
+
+        if (radius > 5) {
+            int offF6 = -1 * d->vectors_data[Forward6].nDeltaFrame;
+            if (n + offF6 >= 0)
+                vsapi->requestFrameFilter(n + offF6, d->super, frameCtx);
+        }
+
+        if (radius > 4) {
+            int offF5 = -1 * d->vectors_data[Forward5].nDeltaFrame;
+            if (n + offF5 >= 0)
+                vsapi->requestFrameFilter(n + offF5, d->super, frameCtx);
+        }
+
+        if (radius > 3) {
+            int offF4 = -1 * d->vectors_data[Forward4].nDeltaFrame;
+            if (n + offF4 >= 0)
+                vsapi->requestFrameFilter(n + offF4, d->super, frameCtx);
+        }
 
         if (radius > 2) {
             int offF3 = -1 * d->vectors_data[Forward3].nDeltaFrame;
@@ -137,6 +168,24 @@ static const VSFrameRef *VS_CC mvdegrainGetFrame(int n, int activationReason, vo
             int offB3 = d->vectors_data[Backward3].nDeltaFrame;
             if (n + offB3 < d->vi->numFrames)
                 vsapi->requestFrameFilter(n + offB3, d->super, frameCtx);
+        }
+
+        if (radius > 3) {
+            int offB4 = d->vectors_data[Backward4].nDeltaFrame;
+            if (n + offB4 < d->vi->numFrames)
+                vsapi->requestFrameFilter(n + offB4, d->super, frameCtx);
+        }
+
+        if (radius > 4) {
+            int offB5 = d->vectors_data[Backward5].nDeltaFrame;
+            if (n + offB5 < d->vi->numFrames)
+                vsapi->requestFrameFilter(n + offB5, d->super, frameCtx);
+        }
+
+        if (radius > 5) {
+            int offB6 = d->vectors_data[Backward6].nDeltaFrame;
+            if (n + offB6 < d->vi->numFrames)
+                vsapi->requestFrameFilter(n + offB6, d->super, frameCtx);
         }
 
         vsapi->requestFrameFilter(n, d->node, frameCtx);
@@ -462,16 +511,22 @@ static void VS_CC mvdegrainFree(void *instanceData, VSCore *core, const VSAPI *v
         DEGRAIN(radius, 128, 128)\
     }
 
-static const std::unordered_map<uint32_t, DenoiseFunction> degrain_functions[3] = {
+static const std::unordered_map<uint32_t, DenoiseFunction> degrain_functions[6] = {
     DEGRAIN_LEVEL(1),
     DEGRAIN_LEVEL(2),
     DEGRAIN_LEVEL(3),
+    DEGRAIN_LEVEL(4),
+    DEGRAIN_LEVEL(5),
+    DEGRAIN_LEVEL(6),
 };
 
-static const std::unordered_map<uint32_t, DenoiseFunction> degrain_functions_sse2[3] = {
+static const std::unordered_map<uint32_t, DenoiseFunction> degrain_functions_sse2[6] = {
     DEGRAIN_LEVEL_SSE2(1),
     DEGRAIN_LEVEL_SSE2(2),
     DEGRAIN_LEVEL_SSE2(3),
+    DEGRAIN_LEVEL_SSE2(4),
+    DEGRAIN_LEVEL_SSE2(5),
+    DEGRAIN_LEVEL_SSE2(6),
 };
 
 static DenoiseFunction selectDegrainFunction(unsigned radius, unsigned width, unsigned height, unsigned bits, int opt) {
