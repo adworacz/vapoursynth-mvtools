@@ -393,188 +393,85 @@ static void VS_CC mvdegrainFree(void *instanceData, VSCore *core, const VSAPI *v
 #if defined(MVTOOLS_X86)
 #define DEGRAIN_SSE2(radius, width, height) \
     { KEY(width, height, 8, MVOPT_SSE2), Degrain_sse2<radius, width, height> },
+
+#define DEGRAIN_LEVEL_SSE2(radius)\
+    {\
+        DEGRAIN_SSE2(radius, 4, 2)\
+        DEGRAIN_SSE2(radius, 4, 4)\
+        DEGRAIN_SSE2(radius, 4, 8)\
+        DEGRAIN_SSE2(radius, 8, 1)\
+        DEGRAIN_SSE2(radius, 8, 2)\
+        DEGRAIN_SSE2(radius, 8, 4)\
+        DEGRAIN_SSE2(radius, 8, 8)\
+        DEGRAIN_SSE2(radius, 8, 16)\
+        DEGRAIN_SSE2(radius, 16, 1)\
+        DEGRAIN_SSE2(radius, 16, 2)\
+        DEGRAIN_SSE2(radius, 16, 4)\
+        DEGRAIN_SSE2(radius, 16, 8)\
+        DEGRAIN_SSE2(radius, 16, 16)\
+        DEGRAIN_SSE2(radius, 16, 32)\
+        DEGRAIN_SSE2(radius, 32, 8)\
+        DEGRAIN_SSE2(radius, 32, 16)\
+        DEGRAIN_SSE2(radius, 32, 32)\
+        DEGRAIN_SSE2(radius, 32, 64)\
+        DEGRAIN_SSE2(radius, 64, 16)\
+        DEGRAIN_SSE2(radius, 64, 32)\
+        DEGRAIN_SSE2(radius, 64, 64)\
+        DEGRAIN_SSE2(radius, 64, 128)\
+        DEGRAIN_SSE2(radius, 128, 32)\
+        DEGRAIN_SSE2(radius, 128, 64)\
+        DEGRAIN_SSE2(radius, 128, 128)\
+    }
 #else
 #define DEGRAIN_SSE2(radius, width, height)
+#define DEGRAIN_LEVEL_SSE2(radius)
 #endif
 
 #define DEGRAIN(radius, width, height) \
     { KEY(width, height, 8, MVOPT_SCALAR), Degrain_C<radius, width, height, uint8_t> }, \
     { KEY(width, height, 16, MVOPT_SCALAR), Degrain_C<radius, width, height, uint16_t> },
 
-//TODO: Update this
-static const std::unordered_map<uint32_t, DenoiseFunction> degrain_functions[3] = {
-    {
-        DEGRAIN(1, 2, 2)
-        DEGRAIN(1, 2, 4)
-        DEGRAIN(1, 4, 2)
-        DEGRAIN(1, 4, 4)
-        DEGRAIN(1, 4, 8)
-        DEGRAIN(1, 8, 1)
-        DEGRAIN(1, 8, 2)
-        DEGRAIN(1, 8, 4)
-        DEGRAIN(1, 8, 8)
-        DEGRAIN(1, 8, 16)
-        DEGRAIN(1, 16, 1)
-        DEGRAIN(1, 16, 2)
-        DEGRAIN(1, 16, 4)
-        DEGRAIN(1, 16, 8)
-        DEGRAIN(1, 16, 16)
-        DEGRAIN(1, 16, 32)
-        DEGRAIN(1, 32, 8)
-        DEGRAIN(1, 32, 16)
-        DEGRAIN(1, 32, 32)
-        DEGRAIN(1, 32, 64)
-        DEGRAIN(1, 64, 16)
-        DEGRAIN(1, 64, 32)
-        DEGRAIN(1, 64, 64)
-        DEGRAIN(1, 64, 128)
-        DEGRAIN(1, 128, 32)
-        DEGRAIN(1, 128, 64)
-        DEGRAIN(1, 128, 128)
-    },
-    {
-        DEGRAIN(2, 2, 2)
-        DEGRAIN(2, 2, 4)
-        DEGRAIN(2, 4, 2)
-        DEGRAIN(2, 4, 4)
-        DEGRAIN(2, 4, 8)
-        DEGRAIN(2, 8, 1)
-        DEGRAIN(2, 8, 2)
-        DEGRAIN(2, 8, 4)
-        DEGRAIN(2, 8, 8)
-        DEGRAIN(2, 8, 16)
-        DEGRAIN(2, 16, 1)
-        DEGRAIN(2, 16, 2)
-        DEGRAIN(2, 16, 4)
-        DEGRAIN(2, 16, 8)
-        DEGRAIN(2, 16, 16)
-        DEGRAIN(2, 16, 32)
-        DEGRAIN(2, 32, 8)
-        DEGRAIN(2, 32, 16)
-        DEGRAIN(2, 32, 32)
-        DEGRAIN(2, 32, 64)
-        DEGRAIN(2, 64, 16)
-        DEGRAIN(2, 64, 32)
-        DEGRAIN(2, 64, 64)
-        DEGRAIN(2, 64, 128)
-        DEGRAIN(2, 128, 32)
-        DEGRAIN(2, 128, 64)
-        DEGRAIN(2, 128, 128)
-    },
-    {
-        DEGRAIN(3, 2, 2)
-        DEGRAIN(3, 2, 4)
-        DEGRAIN(3, 4, 2)
-        DEGRAIN(3, 4, 4)
-        DEGRAIN(3, 4, 8)
-        DEGRAIN(3, 8, 1)
-        DEGRAIN(3, 8, 2)
-        DEGRAIN(3, 8, 4)
-        DEGRAIN(3, 8, 8)
-        DEGRAIN(3, 8, 16)
-        DEGRAIN(3, 16, 1)
-        DEGRAIN(3, 16, 2)
-        DEGRAIN(3, 16, 4)
-        DEGRAIN(3, 16, 8)
-        DEGRAIN(3, 16, 16)
-        DEGRAIN(3, 16, 32)
-        DEGRAIN(3, 32, 8)
-        DEGRAIN(3, 32, 16)
-        DEGRAIN(3, 32, 32)
-        DEGRAIN(3, 32, 64)
-        DEGRAIN(3, 64, 16)
-        DEGRAIN(3, 64, 32)
-        DEGRAIN(3, 64, 64)
-        DEGRAIN(3, 64, 128)
-        DEGRAIN(3, 128, 32)
-        DEGRAIN(3, 128, 64)
-        DEGRAIN(3, 128, 128)
+#define DEGRAIN_LEVEL(radius)\
+    {\
+        DEGRAIN(radius, 2, 2)\
+        DEGRAIN(radius, 2, 4)\
+        DEGRAIN(radius, 4, 2)\
+        DEGRAIN(radius, 4, 4)\
+        DEGRAIN(radius, 4, 8)\
+        DEGRAIN(radius, 8, 1)\
+        DEGRAIN(radius, 8, 2)\
+        DEGRAIN(radius, 8, 4)\
+        DEGRAIN(radius, 8, 8)\
+        DEGRAIN(radius, 8, 16)\
+        DEGRAIN(radius, 16, 1)\
+        DEGRAIN(radius, 16, 2)\
+        DEGRAIN(radius, 16, 4)\
+        DEGRAIN(radius, 16, 8)\
+        DEGRAIN(radius, 16, 16)\
+        DEGRAIN(radius, 16, 32)\
+        DEGRAIN(radius, 32, 8)\
+        DEGRAIN(radius, 32, 16)\
+        DEGRAIN(radius, 32, 32)\
+        DEGRAIN(radius, 32, 64)\
+        DEGRAIN(radius, 64, 16)\
+        DEGRAIN(radius, 64, 32)\
+        DEGRAIN(radius, 64, 64)\
+        DEGRAIN(radius, 64, 128)\
+        DEGRAIN(radius, 128, 32)\
+        DEGRAIN(radius, 128, 64)\
+        DEGRAIN(radius, 128, 128)\
     }
+
+static const std::unordered_map<uint32_t, DenoiseFunction> degrain_functions[3] = {
+    DEGRAIN_LEVEL(1),
+    DEGRAIN_LEVEL(2),
+    DEGRAIN_LEVEL(3),
 };
 
-// TODO: Update this
 static const std::unordered_map<uint32_t, DenoiseFunction> degrain_functions_sse2[3] = {
-    {
-        DEGRAIN_SSE2(1, 4, 2)
-        DEGRAIN_SSE2(1, 4, 4)
-        DEGRAIN_SSE2(1, 4, 8)
-        DEGRAIN_SSE2(1, 8, 1)
-        DEGRAIN_SSE2(1, 8, 2)
-        DEGRAIN_SSE2(1, 8, 4)
-        DEGRAIN_SSE2(1, 8, 8)
-        DEGRAIN_SSE2(1, 8, 16)
-        DEGRAIN_SSE2(1, 16, 1)
-        DEGRAIN_SSE2(1, 16, 2)
-        DEGRAIN_SSE2(1, 16, 4)
-        DEGRAIN_SSE2(1, 16, 8)
-        DEGRAIN_SSE2(1, 16, 16)
-        DEGRAIN_SSE2(1, 16, 32)
-        DEGRAIN_SSE2(1, 32, 8)
-        DEGRAIN_SSE2(1, 32, 16)
-        DEGRAIN_SSE2(1, 32, 32)
-        DEGRAIN_SSE2(1, 32, 64)
-        DEGRAIN_SSE2(1, 64, 16)
-        DEGRAIN_SSE2(1, 64, 32)
-        DEGRAIN_SSE2(1, 64, 64)
-        DEGRAIN_SSE2(1, 64, 128)
-        DEGRAIN_SSE2(1, 128, 32)
-        DEGRAIN_SSE2(1, 128, 64)
-        DEGRAIN_SSE2(1, 128, 128)
-    },
-    {
-        DEGRAIN_SSE2(2, 4, 2)
-        DEGRAIN_SSE2(2, 4, 4)
-        DEGRAIN_SSE2(2, 4, 8)
-        DEGRAIN_SSE2(2, 8, 1)
-        DEGRAIN_SSE2(2, 8, 2)
-        DEGRAIN_SSE2(2, 8, 4)
-        DEGRAIN_SSE2(2, 8, 8)
-        DEGRAIN_SSE2(2, 8, 16)
-        DEGRAIN_SSE2(2, 16, 1)
-        DEGRAIN_SSE2(2, 16, 2)
-        DEGRAIN_SSE2(2, 16, 4)
-        DEGRAIN_SSE2(2, 16, 8)
-        DEGRAIN_SSE2(2, 16, 16)
-        DEGRAIN_SSE2(2, 16, 32)
-        DEGRAIN_SSE2(2, 32, 8)
-        DEGRAIN_SSE2(2, 32, 16)
-        DEGRAIN_SSE2(2, 32, 32)
-        DEGRAIN_SSE2(2, 32, 64)
-        DEGRAIN_SSE2(2, 64, 16)
-        DEGRAIN_SSE2(2, 64, 32)
-        DEGRAIN_SSE2(2, 64, 64)
-        DEGRAIN_SSE2(2, 64, 128)
-        DEGRAIN_SSE2(2, 128, 32)
-        DEGRAIN_SSE2(2, 128, 64)
-        DEGRAIN_SSE2(2, 128, 128)
-    },
-    {
-        DEGRAIN_SSE2(3, 4, 2)
-        DEGRAIN_SSE2(3, 4, 4)
-        DEGRAIN_SSE2(3, 4, 8)
-        DEGRAIN_SSE2(3, 8, 1)
-        DEGRAIN_SSE2(3, 8, 2)
-        DEGRAIN_SSE2(3, 8, 4)
-        DEGRAIN_SSE2(3, 8, 8)
-        DEGRAIN_SSE2(3, 8, 16)
-        DEGRAIN_SSE2(3, 16, 1)
-        DEGRAIN_SSE2(3, 16, 2)
-        DEGRAIN_SSE2(3, 16, 4)
-        DEGRAIN_SSE2(3, 16, 8)
-        DEGRAIN_SSE2(3, 16, 16)
-        DEGRAIN_SSE2(3, 16, 32)
-        DEGRAIN_SSE2(3, 32, 8)
-        DEGRAIN_SSE2(3, 32, 16)
-        DEGRAIN_SSE2(3, 32, 32)
-        DEGRAIN_SSE2(3, 32, 64)
-        DEGRAIN_SSE2(3, 64, 16)
-        DEGRAIN_SSE2(3, 64, 32)
-        DEGRAIN_SSE2(3, 64, 64)
-        DEGRAIN_SSE2(3, 64, 128)
-        DEGRAIN_SSE2(3, 128, 32)
-        DEGRAIN_SSE2(3, 128, 64)
-        DEGRAIN_SSE2(3, 128, 128)
-    }
+    DEGRAIN_LEVEL_SSE2(1),
+    DEGRAIN_LEVEL_SSE2(2),
+    DEGRAIN_LEVEL_SSE2(3),
 };
 
 static DenoiseFunction selectDegrainFunction(unsigned radius, unsigned width, unsigned height, unsigned bits, int opt) {
@@ -599,6 +496,8 @@ static DenoiseFunction selectDegrainFunction(unsigned radius, unsigned width, un
 
 #undef DEGRAIN
 #undef DEGRAIN_SSE2
+#undef DEGRAIN_LEVEL
+#undef DEGRAIN_LEVEL_SSE2
 
 #undef KEY
 

@@ -15,8 +15,34 @@ enum InstructionSets {
 #if defined(MVTOOLS_X86)
 #define DEGRAIN_AVX2(radius, width, height) \
     { KEY(width, height, 8, AVX2), Degrain_avx2<radius, width, height> },
+
+#define DEGRAIN_LEVEL_AVX2(radius) \
+    {\
+        DEGRAIN_AVX2(radius, 8, 2)\
+        DEGRAIN_AVX2(radius, 8, 4)\
+        DEGRAIN_AVX2(radius, 8, 8)\
+        DEGRAIN_AVX2(radius, 8, 16)\
+        DEGRAIN_AVX2(radius, 16, 1)\
+        DEGRAIN_AVX2(radius, 16, 2)\
+        DEGRAIN_AVX2(radius, 16, 4)\
+        DEGRAIN_AVX2(radius, 16, 8)\
+        DEGRAIN_AVX2(radius, 16, 16)\
+        DEGRAIN_AVX2(radius, 16, 32)\
+        DEGRAIN_AVX2(radius, 32, 8)\
+        DEGRAIN_AVX2(radius, 32, 16)\
+        DEGRAIN_AVX2(radius, 32, 32)\
+        DEGRAIN_AVX2(radius, 32, 64)\
+        DEGRAIN_AVX2(radius, 64, 16)\
+        DEGRAIN_AVX2(radius, 64, 32)\
+        DEGRAIN_AVX2(radius, 64, 64)\
+        DEGRAIN_AVX2(radius, 64, 128)\
+        DEGRAIN_AVX2(radius, 128, 32)\
+        DEGRAIN_AVX2(radius, 128, 64)\
+        DEGRAIN_AVX2(radius, 128, 128)\
+    }
 #else
 #define DEGRAIN_AVX2(radius, width, height)
+#define DEGRAIN_LEVEL_AVX2(radius)
 #endif
 
 
@@ -118,77 +144,10 @@ static void Degrain_avx2(uint8_t *pDst, int nDstPitch, const uint8_t *pSrc, int 
 }
 #endif
 
-//TODO: Update this.
 static const std::unordered_map<uint32_t, DenoiseFunction> degrain_functions[3] = {
-    {
-        DEGRAIN_AVX2(1, 8, 2)
-        DEGRAIN_AVX2(1, 8, 4)
-        DEGRAIN_AVX2(1, 8, 8)
-        DEGRAIN_AVX2(1, 8, 16)
-        DEGRAIN_AVX2(1, 16, 1)
-        DEGRAIN_AVX2(1, 16, 2)
-        DEGRAIN_AVX2(1, 16, 4)
-        DEGRAIN_AVX2(1, 16, 8)
-        DEGRAIN_AVX2(1, 16, 16)
-        DEGRAIN_AVX2(1, 16, 32)
-        DEGRAIN_AVX2(1, 32, 8)
-        DEGRAIN_AVX2(1, 32, 16)
-        DEGRAIN_AVX2(1, 32, 32)
-        DEGRAIN_AVX2(1, 32, 64)
-        DEGRAIN_AVX2(1, 64, 16)
-        DEGRAIN_AVX2(1, 64, 32)
-        DEGRAIN_AVX2(1, 64, 64)
-        DEGRAIN_AVX2(1, 64, 128)
-        DEGRAIN_AVX2(1, 128, 32)
-        DEGRAIN_AVX2(1, 128, 64)
-        DEGRAIN_AVX2(1, 128, 128)
-    },
-    {
-        DEGRAIN_AVX2(2, 8, 2)
-        DEGRAIN_AVX2(2, 8, 4)
-        DEGRAIN_AVX2(2, 8, 8)
-        DEGRAIN_AVX2(2, 8, 16)
-        DEGRAIN_AVX2(2, 16, 1)
-        DEGRAIN_AVX2(2, 16, 2)
-        DEGRAIN_AVX2(2, 16, 4)
-        DEGRAIN_AVX2(2, 16, 8)
-        DEGRAIN_AVX2(2, 16, 16)
-        DEGRAIN_AVX2(2, 16, 32)
-        DEGRAIN_AVX2(2, 32, 8)
-        DEGRAIN_AVX2(2, 32, 16)
-        DEGRAIN_AVX2(2, 32, 32)
-        DEGRAIN_AVX2(2, 32, 64)
-        DEGRAIN_AVX2(2, 64, 16)
-        DEGRAIN_AVX2(2, 64, 32)
-        DEGRAIN_AVX2(2, 64, 64)
-        DEGRAIN_AVX2(2, 64, 128)
-        DEGRAIN_AVX2(2, 128, 32)
-        DEGRAIN_AVX2(2, 128, 64)
-        DEGRAIN_AVX2(2, 128, 128)
-    },
-    {
-        DEGRAIN_AVX2(3, 8, 2)
-        DEGRAIN_AVX2(3, 8, 4)
-        DEGRAIN_AVX2(3, 8, 8)
-        DEGRAIN_AVX2(3, 8, 16)
-        DEGRAIN_AVX2(3, 16, 1)
-        DEGRAIN_AVX2(3, 16, 2)
-        DEGRAIN_AVX2(3, 16, 4)
-        DEGRAIN_AVX2(3, 16, 8)
-        DEGRAIN_AVX2(3, 16, 16)
-        DEGRAIN_AVX2(3, 16, 32)
-        DEGRAIN_AVX2(3, 32, 8)
-        DEGRAIN_AVX2(3, 32, 16)
-        DEGRAIN_AVX2(3, 32, 32)
-        DEGRAIN_AVX2(3, 32, 64)
-        DEGRAIN_AVX2(3, 64, 16)
-        DEGRAIN_AVX2(3, 64, 32)
-        DEGRAIN_AVX2(3, 64, 64)
-        DEGRAIN_AVX2(3, 64, 128)
-        DEGRAIN_AVX2(3, 128, 32)
-        DEGRAIN_AVX2(3, 128, 64)
-        DEGRAIN_AVX2(3, 128, 128)
-    }
+    DEGRAIN_LEVEL_AVX2(1),
+    DEGRAIN_LEVEL_AVX2(2),
+    DEGRAIN_LEVEL_AVX2(3),
 };
 
 DenoiseFunction selectDegrainFunctionAVX2(unsigned radius, unsigned width, unsigned height, unsigned bits) {
