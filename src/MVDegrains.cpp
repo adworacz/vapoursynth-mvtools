@@ -515,11 +515,11 @@ static void selectFunctions(MVDegrainData *d) {
 
         d->ToPixels = ToPixels_uint16_t_uint8_t;
 
-        if (d->opt) {
 #if defined(MVTOOLS_X86)
+        if (d->opt) {
             d->LimitChanges = LimitChanges_sse2;
-#endif
         }
+#endif
     } else {
         d->LimitChanges = LimitChanges_C<uint16_t>;
 
