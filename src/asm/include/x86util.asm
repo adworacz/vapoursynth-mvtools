@@ -1,10 +1,12 @@
 ;*****************************************************************************
 ;* x86util.asm: x86 utility macros
 ;*****************************************************************************
-;* Copyright (C) 2008-2022 x264 project
+;* Copyright (C) 2003-2013 x264 project
+;* Copyright (C) 2013-2020 MulticoreWare, Inc
 ;*
 ;* Authors: Holger Lubitz <holger@lubitz.org>
 ;*          Loren Merritt <lorenm@u.washington.edu>
+;*          Min Chen <chenm003@163.com>
 ;*
 ;* This program is free software; you can redistribute it and/or modify
 ;* it under the terms of the GNU General Public License as published by
@@ -21,27 +23,10 @@
 ;* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111, USA.
 ;*
 ;* This program is also available under a commercial proprietary license.
-;* For more information, contact us at licensing@x264.com.
+;* For more information, contact us at license @ x265.com.
 ;*****************************************************************************
 
-; like cextern, but with a plain x264 prefix instead of a bitdepth-specific one
-%macro cextern_common 1
-    %xdefine %1 mangle(x264 %+ _ %+ %1)
-    CAT_XDEFINE cglobaled_, %1, 1
-    extern %1
-%endmacro
-
-%ifndef BIT_DEPTH
-    %assign BIT_DEPTH 0
-%endif
-
-%if BIT_DEPTH > 8
-    %assign HIGH_BIT_DEPTH 1
-%else
-    %assign HIGH_BIT_DEPTH 0
-%endif
-
-%assign FENC_STRIDE 16
+%assign FENC_STRIDE 64
 %assign FDEC_STRIDE 32
 
 %assign SIZEOF_PIXEL 1
@@ -70,6 +55,7 @@
 %endrep
 %endif
 %endmacro
+
 
 %macro SBUTTERFLY 4
 %ifidn %1, dqqq
@@ -286,57 +272,31 @@
 %if cpuflag(avx2) && %3 == 0
     vpbroadcastw %1, %2
 %else
-    %define %%s %2
-%ifid %2
-    %define %%s xmm%2
-%elif %3 == 0
-    movd      xmm%1, %2
-    %define %%s xmm%1
-%endif
-    PSHUFLW   xmm%1, %%s, (%3)*q1111
-%if mmsize >= 32
-    vpbroadcastq %1, xmm%1
-%elif mmsize == 16
+    PSHUFLW      %1, %2, (%3)*q1111
+%if mmsize == 16
     punpcklqdq   %1, %1
 %endif
 %endif
 %endmacro
 
 %imacro SPLATD 2-3 0
-%if cpuflag(avx2) && %3 == 0
-    vpbroadcastd %1, %2
+%if mmsize == 16
+    pshufd %1, %2, (%3)*q1111
 %else
-    %define %%s %2
-%ifid %2
-    %define %%s xmm%2
-%elif %3 == 0
-    movd      xmm%1, %2
-    %define %%s xmm%1
-%endif
-%if mmsize == 8 && %3 == 0
-%ifidn %1, %%s
-    punpckldq    %1, %1
-%else
-    pshufw       %1, %%s, q1010
-%endif
-%elif mmsize == 8 && %3 == 1
-%ifidn %1, %%s
-    punpckhdq    %1, %1
-%else
-    pshufw       %1, %%s, q3232
-%endif
-%else
-    pshufd    xmm%1, %%s, (%3)*q1111
-%endif
-%if mmsize >= 32
-    vpbroadcastq %1, xmm%1
-%endif
+    pshufw %1, %2, (%3)*q0101 + ((%3)+1)*q1010
 %endif
 %endmacro
 
 %macro CLIPW 3 ;(dst, min, max)
     pmaxsw %1, %2
     pminsw %1, %3
+%endmacro
+
+%macro CLIPW2 4 ;(dst0, dst1, min, max)
+    pmaxsw %1, %3
+    pmaxsw %2, %3
+    pminsw %1, %4
+    pminsw %2, %4
 %endmacro
 
 %macro MOVHL 2 ; dst, src
@@ -365,10 +325,11 @@
     paddd         xmm%1, xmm%2
 %endif
 %if cpuflag(xop) && sizeof%1 == 16
-    vphadddq      xmm%1, xmm%1
-%else
-    PSHUFLW       xmm%2, xmm%1, q1032
-    paddd         xmm%1, xmm%2
+    vphadddq xmm%1, xmm%1
+%endif
+%if notcpuflag(xop)
+    PSHUFLW xmm%2, xmm%1, q1032
+    paddd   xmm%1, xmm%2
 %endif
 %endmacro
 
@@ -378,8 +339,8 @@
     MOVHL     %2, %1
     paddd     %1, %2
 %else
-    pmaddwd   %1, [pw_1]
-    HADDD     %1, %2
+    pmaddwd %1, [pw_1]
+    HADDD   %1, %2
 %endif
 %endmacro
 
@@ -411,11 +372,11 @@
 %if sizeof%1==32
                                  ; %3 = abcdefgh ijklmnop (lower address)
                                  ; %2 = ABCDEFGH IJKLMNOP (higher address)
-;   vperm2i128 %5, %2, %3, q0003 ; %5 = ijklmnop ABCDEFGH
-%if %4 < 16
-    palignr    %1, %5, %3, %4    ; %1 = bcdefghi jklmnopA
+    vperm2i128 %4, %1, %2, q0003 ; %4 = ijklmnop ABCDEFGH
+%if %3 < 16
+    palignr    %1, %4, %2, %3    ; %1 = bcdefghi jklmnopA
 %else
-    palignr    %1, %2, %5, %4-16 ; %1 = pABCDEFG HIJKLMNO
+    palignr    %1, %2, %4, %3-16 ; %1 = pABCDEFG HIJKLMNO
 %endif
 %elif cpuflag(ssse3)
     %if %0==5
@@ -617,10 +578,8 @@
     %elif %1==2
         %if mmsize==8
             SBUTTERFLY dq, %3, %4, %5
-        %elif %0==6
-            TRANS q, ORDER, %3, %4, %5, %6
         %else
-            TRANS q, ORDER, %3, %4, %5
+            TRANS q, ORDER, %3, %4, %5, %6
         %endif
     %elif %1==4
         SBUTTERFLY qdq, %3, %4, %5
@@ -934,4 +893,15 @@
 %else
     SWAP       %2, %3
 %endif
+%endmacro
+
+; IACA support
+%macro IACA_START 0
+    mov ebx, 111
+    db 0x64, 0x67, 0x90
+%endmacro
+
+%macro IACA_END 0
+    mov ebx, 222
+    db 0x64, 0x67, 0x90
 %endmacro

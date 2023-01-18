@@ -464,7 +464,7 @@ static DenoiseFunction selectDegrainFunction(unsigned radius, unsigned width, un
             degrain = degrain_functions_sse2[radius - 1].at(KEY(width, height, bits, MVOPT_SSE2));
         } catch (std::out_of_range &) { }
 
-        if (g_cpuinfo & X264_CPU_AVX2) {
+        if (g_cpuinfo & X265_CPU_AVX2) {
             DenoiseFunction tmp = selectDegrainFunctionAVX2(radius, width, height, bits);
             if (tmp)
                 degrain = tmp;

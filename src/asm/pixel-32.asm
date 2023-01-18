@@ -1,7 +1,8 @@
 ;*****************************************************************************
 ;* pixel-32.asm: x86_32 pixel metrics
 ;*****************************************************************************
-;* Copyright (C) 2003-2022 x264 project
+;* Copyright (C) 2003-2013 x264 project
+;* Copyright (C) 2013-2020 MulticoreWare, Inc
 ;*
 ;* Authors: Loren Merritt <lorenm@u.washington.edu>
 ;*          Laurent Aimar <fenrir@via.ecp.fr>
@@ -21,7 +22,7 @@
 ;* Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02111, USA.
 ;*
 ;* This program is also available under a commercial proprietary license.
-;* For more information, contact us at licensing@x264.com.
+;* For more information, contact us at license @ x265.com.
 ;*****************************************************************************
 
 %include "x86inc.asm"
@@ -32,8 +33,6 @@ cextern pw_pmpmpmpm
 
 SECTION .text
 INIT_MMX mmx2
-
-%if HIGH_BIT_DEPTH == 0
 
 %macro LOAD_DIFF_4x8P 1 ; dx
     LOAD_DIFF  m0, m7, none, [r0+%1],      [r2+%1]
@@ -420,4 +419,3 @@ cglobal pixel_ssim_4x4x2_core, 0,5
     emms
     RET
 
-%endif ; !HIGH_BIT_DEPTH

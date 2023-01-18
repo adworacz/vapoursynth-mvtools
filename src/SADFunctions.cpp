@@ -343,19 +343,19 @@ unsigned int sad_c(const uint8_t *pSrc8, intptr_t nSrcPitch, const uint8_t *pRef
 
 
 #if defined(MVTOOLS_X86)
-#define SAD_X264_U8_MMX(width, height) \
+#define SAD_X265_U8_MMX(width, height) \
     { KEY(width, height, 8, MMX), mvtools_pixel_sad_##width##x##height##_mmx2 },
 
-#define SAD_X264_U8_MMX_CACHE64(width, height) \
+#define SAD_X265_U8_MMX_CACHE64(width, height) \
     { KEY(width, height, 8, MMX_CACHE64), mvtools_pixel_sad_##width##x##height##_cache64_mmx2 },
 
-#define SAD_X264_U8_SSE2(width, height) \
+#define SAD_X265_U8_SSE2(width, height) \
     { KEY(width, height, 8, SSE2), mvtools_pixel_sad_##width##x##height##_sse2 },
 
-#define SAD_X264_U8_SSE3(width, height) \
+#define SAD_X265_U8_SSE3(width, height) \
     { KEY(width, height, 8, SSE3), mvtools_pixel_sad_##width##x##height##_sse3 },
 
-#define SAD_X264_U8_SSSE3_CACHE64(width, height) \
+#define SAD_X265_U8_SSSE3_CACHE64(width, height) \
     { KEY(width, height, 8, SSSE3_CACHE64), mvtools_pixel_sad_##width##x##height##_cache64_ssse3 },
 
 #define SAD_U8_SSE2(width, height) \
@@ -364,11 +364,11 @@ unsigned int sad_c(const uint8_t *pSrc8, intptr_t nSrcPitch, const uint8_t *pRef
 #define SAD_U16_SSE2(width, height) \
     { KEY(width, height, 16, SSE2), SADWrapperU16<width, height>::sad_u16_sse2 },
 #else
-#define SAD_X264_U8_MMX(width, height)
-#define SAD_X264_U8_MMX_CACHE64(width, height)
-#define SAD_X264_U8_SSE2(width, height)
-#define SAD_X264_U8_SSE3(width, height)
-#define SAD_X264_U8_SSSE3_CACHE64(width, height)
+#define SAD_X265_U8_MMX(width, height)
+#define SAD_X265_U8_MMX_CACHE64(width, height)
+#define SAD_X265_U8_SSE2(width, height)
+#define SAD_X265_U8_SSE3(width, height)
+#define SAD_X265_U8_SSSE3_CACHE64(width, height)
 #define SAD_U8_SSE2(width, height)
 #define SAD_U16_SSE2(width, height)
 #endif
@@ -405,14 +405,14 @@ static const std::unordered_map<uint32_t, SADFunction> sad_functions = {
     SAD(128, 32)
     SAD(128, 64)
     SAD(128, 128)
-    SAD_X264_U8_MMX(4, 4)
-    SAD_X264_U8_MMX(4, 8)
-    SAD_X264_U8_SSE2(16, 8)
-    SAD_X264_U8_SSE2(16, 16)
-    SAD_X264_U8_SSE3(16, 8)
-    SAD_X264_U8_SSE3(16, 16)
-    SAD_X264_U8_SSSE3_CACHE64(16, 8)
-    SAD_X264_U8_SSSE3_CACHE64(16, 16)
+    SAD_X265_U8_MMX(4, 4)
+    SAD_X265_U8_MMX(4, 8)
+    SAD_X265_U8_SSE2(16, 8)
+    SAD_X265_U8_SSE2(16, 16)
+    SAD_X265_U8_SSE3(16, 8)
+    SAD_X265_U8_SSE3(16, 16)
+    SAD_X265_U8_SSSE3_CACHE64(16, 8)
+    SAD_X265_U8_SSSE3_CACHE64(16, 16)
     SAD_U8_SSE2(4, 2)
     SAD_U8_SSE2(8, 1)
     SAD_U8_SSE2(8, 2)
@@ -471,7 +471,7 @@ SADFunction selectSADFunction(unsigned width, unsigned height, unsigned bits, in
             sad = sad_functions.at(KEY(width, height, bits, MMX));
         } catch (std::out_of_range &) { }
 
-        if (cpu & X264_CPU_CACHELINE_64) {
+        if (cpu & X265_CPU_CACHELINE_64) {
             try {
                 sad = sad_functions.at(KEY(width, height, bits, MMX_CACHE64));
             } catch (std::out_of_range &) { }
@@ -481,19 +481,19 @@ SADFunction selectSADFunction(unsigned width, unsigned height, unsigned bits, in
             sad = sad_functions.at(KEY(width, height, bits, SSE2));
         } catch (std::out_of_range &) { }
 
-        if (cpu & X264_CPU_SSE3) {
+        if (cpu & X265_CPU_SSE3) {
             try {
                 sad = sad_functions.at(KEY(width, height, bits, SSE3));
             } catch (std::out_of_range &) { }
         }
 
-        if ((cpu & X264_CPU_SSSE3) && (cpu & X264_CPU_CACHELINE_64)) {
+        if ((cpu & X265_CPU_SSSE3) && (cpu & X265_CPU_CACHELINE_64)) {
             try {
                 sad = sad_functions.at(KEY(width, height, bits, SSSE3_CACHE64));
             } catch (std::out_of_range &) { }
         }
 
-        if (cpu & X264_CPU_AVX2) {
+        if (cpu & X265_CPU_AVX2) {
             SADFunction tmp = selectSADFunctionAVX2(width, height, bits);
             if (tmp)
                 sad = tmp;
@@ -504,11 +504,11 @@ SADFunction selectSADFunction(unsigned width, unsigned height, unsigned bits, in
     return sad;
 }
 
-#undef SAD_X264_U8_MMX
-#undef SAD_X264_U8_MMX_CACHE64
-#undef SAD_X264_U8_SSE2
-#undef SAD_X264_U8_SSE3
-#undef SAD_X264_U8_SSSE3_CACHE64
+#undef SAD_X265_U8_MMX
+#undef SAD_X265_U8_MMX_CACHE64
+#undef SAD_X265_U8_SSE2
+#undef SAD_X265_U8_SSE3
+#undef SAD_X265_U8_SSSE3_CACHE64
 #undef SAD_U8_SSE2
 #undef SAD_U16_SSE2
 #undef SAD
@@ -679,46 +679,46 @@ static unsigned int Satd_SIMD(const uint8_t *pSrc, intptr_t nSrcPitch, const uin
 
 
 #if defined(MVTOOLS_X86)
-#define SATD_X264_U8_MMX(width, height) \
+#define SATD_X265_U8_MMX(width, height) \
     { KEY(width, height, 8, MMX), mvtools_pixel_satd_##width##x##height##_mmx2 },
 
-#define SATD_X264_U8_SSE2(width, height) \
+#define SATD_X265_U8_SSE2(width, height) \
     { KEY(width, height, 8, SSE2), mvtools_pixel_satd_##width##x##height##_sse2 },
 
-#define SATD_X264_U8_SSSE3(width, height) \
+#define SATD_X265_U8_SSSE3(width, height) \
     { KEY(width, height, 8, SSSE3), mvtools_pixel_satd_##width##x##height##_ssse3 },
 
-#define SATD_X264_U8_SSE4(width, height) \
+#define SATD_X265_U8_SSE4(width, height) \
     { KEY(width, height, 8, SSE4), mvtools_pixel_satd_##width##x##height##_sse4 },
 
-#define SATD_X264_U8_AVX(width, height) \
+#define SATD_X265_U8_AVX(width, height) \
     { KEY(width, height, 8, AVX), mvtools_pixel_satd_##width##x##height##_avx },
 
-#define SATD_X264_U8_XOP(width, height) \
+#define SATD_X265_U8_XOP(width, height) \
     { KEY(width, height, 8, XOP), mvtools_pixel_satd_##width##x##height##_xop },
 
-#define SATD_X264_U8_AVX2(width, height) \
+#define SATD_X265_U8_AVX2(width, height) \
     { KEY(width, height, 8, AVX2), mvtools_pixel_satd_##width##x##height##_avx2 },
 
 #else
-#define SATD_X264_U8_MMX(width, height)
-#define SATD_X264_U8_SSE2(width, height)
-#define SATD_X264_U8_SSSE3(width, height)
-#define SATD_X264_U8_SSE4(width, height)
-#define SATD_X264_U8_AVX(width, height)
-#define SATD_X264_U8_XOP(width, height)
-#define SATD_X264_U8_AVX2(width, height)
+#define SATD_X265_U8_MMX(width, height)
+#define SATD_X265_U8_SSE2(width, height)
+#define SATD_X265_U8_SSSE3(width, height)
+#define SATD_X265_U8_SSE4(width, height)
+#define SATD_X265_U8_AVX(width, height)
+#define SATD_X265_U8_XOP(width, height)
+#define SATD_X265_U8_AVX2(width, height)
 #endif
 
 #define SATD(width, height) \
     { KEY(width, height, 8, Scalar), Satd_C<width, height, uint8_t> }, \
     { KEY(width, height, 16, Scalar), Satd_C<width, height, uint16_t> },
 
-#define SATD_X264_U8(width, height) \
-    SATD_X264_U8_SSSE3(width, height) \
-    SATD_X264_U8_SSE4(width, height) \
-    SATD_X264_U8_AVX(width, height) \
-    SATD_X264_U8_XOP(width, height)
+#define SATD_X265_U8(width, height) \
+    SATD_X265_U8_SSSE3(width, height) \
+    SATD_X265_U8_SSE4(width, height) \
+    SATD_X265_U8_AVX(width, height) \
+    SATD_X265_U8_XOP(width, height)
 
 #define SATD_U8_SIMD(width, height) \
     { KEY(width, height, 8, SSE2), Satd_SIMD<width, height, SSE2> }, \
@@ -740,19 +740,19 @@ static const std::unordered_map<uint32_t, SADFunction> satd_functions = {
     SATD(64, 64)
     SATD(128, 64)
     SATD(128, 128)
-    SATD_X264_U8(4, 4)
-    SATD_X264_U8(8, 4)
-    SATD_X264_U8(8, 8)
-    SATD_X264_U8(16, 8)
-    SATD_X264_U8(16, 16)
-    SATD_X264_U8_MMX(4, 4)
-    SATD_X264_U8_SSE2(8, 4)
-    SATD_X264_U8_SSE2(8, 8)
-    SATD_X264_U8_SSE2(16, 8)
-    SATD_X264_U8_SSE2(16, 16)
-    SATD_X264_U8_AVX2(8, 8)
-    SATD_X264_U8_AVX2(16, 8)
-    SATD_X264_U8_AVX2(16, 16)
+    SATD_X265_U8(4, 4)
+    SATD_X265_U8(8, 4)
+    SATD_X265_U8(8, 8)
+    SATD_X265_U8(16, 8)
+    SATD_X265_U8(16, 16)
+    SATD_X265_U8_MMX(4, 4)
+    SATD_X265_U8_SSE2(8, 4)
+    SATD_X265_U8_SSE2(8, 8)
+    SATD_X265_U8_SSE2(16, 8)
+    SATD_X265_U8_SSE2(16, 16)
+    SATD_X265_U8_AVX2(8, 8)
+    SATD_X265_U8_AVX2(16, 8)
+    SATD_X265_U8_AVX2(16, 16)
     SATD_U8_SIMD(32, 16)
     SATD_U8_SIMD(32, 32)
     SATD_U8_SIMD(64, 32)
@@ -774,31 +774,31 @@ SADFunction selectSATDFunction(unsigned width, unsigned height, unsigned bits, i
             satd = satd_functions.at(KEY(width, height, bits, SSE2));
         } catch (std::out_of_range &) { }
 
-        if (cpu & X264_CPU_SSSE3) {
+        if (cpu & X265_CPU_SSSE3) {
             try {
                 satd = satd_functions.at(KEY(width, height, bits, SSSE3));
             } catch (std::out_of_range &) { }
         }
 
-        if (cpu & X264_CPU_SSE4) {
+        if (cpu & X265_CPU_SSE4) {
             try {
                 satd = satd_functions.at(KEY(width, height, bits, SSE4));
             } catch (std::out_of_range &) { }
         }
 
-        if (cpu & X264_CPU_AVX) {
+        if (cpu & X265_CPU_AVX) {
             try {
                 satd = satd_functions.at(KEY(width, height, bits, AVX));
             } catch (std::out_of_range &) { }
         }
 
-        if (cpu & X264_CPU_XOP) {
+        if (cpu & X265_CPU_XOP) {
             try {
                 satd = satd_functions.at(KEY(width, height, bits, XOP));
             } catch (std::out_of_range &) { }
         }
 
-        if (cpu & X264_CPU_AVX2) {
+        if (cpu & X265_CPU_AVX2) {
             try {
                 satd = satd_functions.at(KEY(width, height, bits, AVX2));
             } catch (std::out_of_range &) { }
@@ -809,13 +809,13 @@ SADFunction selectSATDFunction(unsigned width, unsigned height, unsigned bits, i
     return satd;
 }
 
-#undef SATD_X264_U8_MMX
-#undef SATD_X264_U8_SSE2
-#undef SATD_X264_U8_SSSE3
-#undef SATD_X264_U8_SSE4
-#undef SATD_X264_U8_AVX
-#undef SATD_X264_U8_XOP
-#undef SATD_X264_U8_AVX2
+#undef SATD_X265_U8_MMX
+#undef SATD_X265_U8_SSE2
+#undef SATD_X265_U8_SSSE3
+#undef SATD_X265_U8_SSE4
+#undef SATD_X265_U8_AVX
+#undef SATD_X265_U8_XOP
+#undef SATD_X265_U8_AVX2
 #undef SATD
 
 #undef KEY

@@ -45,44 +45,44 @@ uint32_t cpu_detect(void) {
 
     mvtools_cpu_cpuid(1, &eax, &ebx, &ecx, &edx);
     if (edx & 0x00800000)
-        cpu |= X264_CPU_MMX;
+        cpu |= X265_CPU_MMX;
     else
         return cpu;
     if (edx & 0x02000000)
-        cpu |= X264_CPU_MMX2 | X264_CPU_SSE;
+        cpu |= X265_CPU_MMX2 | X265_CPU_SSE;
     if (edx & 0x00008000)
-        cpu |= X264_CPU_CMOV;
+        cpu |= X265_CPU_CMOV;
     else
         return cpu;
     if (edx & 0x04000000)
-        cpu |= X264_CPU_SSE2;
+        cpu |= X265_CPU_SSE2;
     if (ecx & 0x00000001)
-        cpu |= X264_CPU_SSE3;
+        cpu |= X265_CPU_SSE3;
     if (ecx & 0x00000200)
-        cpu |= X264_CPU_SSSE3;
+        cpu |= X265_CPU_SSSE3;
     if (ecx & 0x00080000)
-        cpu |= X264_CPU_SSE4;
+        cpu |= X265_CPU_SSE4;
     if (ecx & 0x00100000)
-        cpu |= X264_CPU_SSE42;
+        cpu |= X265_CPU_SSE42;
     
     if (ecx & 0x08000000) { /* XGETBV supported and XSAVE enabled by OS */
         uint64_t xcr0 = mvtools_cpu_xgetbv(0);
         if ((xcr0 & 0x6) == 0x6) { /* XMM/YMM state */
             if (ecx & 0x10000000)
-                cpu |= X264_CPU_AVX;
+                cpu |= X265_CPU_AVX;
             if (ecx & 0x00001000)
-                cpu |= X264_CPU_FMA3;
+                cpu |= X265_CPU_FMA3;
  
             if (max_basic_cap >= 7) {
                 mvtools_cpu_cpuid(7, &eax, &ebx, &ecx, &edx);
                 if (ebx & 0x00000020)
-                    cpu |= X264_CPU_AVX2;
+                    cpu |= X265_CPU_AVX2;
             }
         }
     }
 
-    if (cpu & X264_CPU_SSSE3)
-        cpu |= X264_CPU_SSE2_IS_FAST;
+    if (cpu & X265_CPU_SSSE3)
+        cpu |= X265_CPU_SSE2_IS_FAST;
 
     mvtools_cpu_cpuid(0x80000000, &eax, &ebx, &ecx, &edx);
     max_extended_cap = eax;
@@ -91,37 +91,37 @@ uint32_t cpu_detect(void) {
         mvtools_cpu_cpuid(0x80000001, &eax, &ebx, &ecx, &edx);
 
         if (ecx & 0x00000020)
-            cpu |= X264_CPU_LZCNT; /* Supported by Intel chips starting with Haswell */
+            cpu |= X265_CPU_LZCNT; /* Supported by Intel chips starting with Haswell */
         if (ecx & 0x00000040)      /* SSE4a, AMD only */
         {
             int family = ((eax >> 8) & 0xf) + ((eax >> 20) & 0xff);
-            cpu |= X264_CPU_SSE2_IS_FAST; /* Phenom and later CPUs have fast SSE units */
+            cpu |= X265_CPU_SSE2_IS_FAST; /* Phenom and later CPUs have fast SSE units */
             if (family == 0x14) {
-                cpu &= ~X264_CPU_SSE2_IS_FAST; /* SSSE3 doesn't imply fast SSE anymore... */
-                cpu |= X264_CPU_SSE2_IS_SLOW;  /* Bobcat has 64-bit SIMD units */
-                cpu |= X264_CPU_SLOW_PALIGNR;  /* palignr is insanely slow on Bobcat */
+                cpu &= ~X265_CPU_SSE2_IS_FAST; /* SSSE3 doesn't imply fast SSE anymore... */
+                cpu |= X265_CPU_SSE2_IS_SLOW;  /* Bobcat has 64-bit SIMD units */
+                cpu |= X265_CPU_SLOW_PALIGNR;  /* palignr is insanely slow on Bobcat */
             }
             if (family == 0x16) {
-                cpu |= X264_CPU_SLOW_PSHUFB; /* Jaguar's pshufb isn't that slow, but it's slow enough
+                cpu |= X265_CPU_SLOW_PSHUFB; /* Jaguar's pshufb isn't that slow, but it's slow enough
                                                 * compared to alternate instruction sequences that this
                                                 * is equal or faster on almost all such functions. */
             }
         }
 
-        if (cpu & X264_CPU_AVX) {
+        if (cpu & X265_CPU_AVX) {
             if (ecx & 0x00000800) /* XOP */
-                cpu |= X264_CPU_XOP;
+                cpu |= X265_CPU_XOP;
             if (ecx & 0x00010000) /* FMA4 */
-                cpu |= X264_CPU_FMA4;
+                cpu |= X265_CPU_FMA4;
         }
 
         if (!strcmp((char *)vendor, "AuthenticAMD")) {
             if (edx & 0x00400000)
-                cpu |= X264_CPU_MMX2;
-            if (!(cpu & X264_CPU_LZCNT))
-                cpu |= X264_CPU_SLOW_CTZ;
-            if ((cpu & X264_CPU_SSE2) && !(cpu & X264_CPU_SSE2_IS_FAST))
-                cpu |= X264_CPU_SSE2_IS_SLOW; /* AMD CPUs come in two types: terrible at SSE and great at it */
+                cpu |= X265_CPU_MMX2;
+            if (!(cpu & X265_CPU_LZCNT))
+                cpu |= X265_CPU_SLOW_CTZ;
+            if ((cpu & X265_CPU_SSE2) && !(cpu & X265_CPU_SSE2_IS_FAST))
+                cpu |= X265_CPU_SSE2_IS_SLOW; /* AMD CPUs come in two types: terrible at SSE and great at it */
         }
     }
 
@@ -134,23 +134,23 @@ uint32_t cpu_detect(void) {
              * theoretically support sse2, but it's significantly slower than mmx for
              * almost all of x264's functions, so let's just pretend they don't. */
             if (model == 9 || model == 13 || model == 14) {
-                cpu &= ~(X264_CPU_SSE2 | X264_CPU_SSE3);
-                assert(!(cpu & (X264_CPU_SSSE3 | X264_CPU_SSE4)));
+                cpu &= ~(X265_CPU_SSE2 | X265_CPU_SSE3);
+                assert(!(cpu & (X265_CPU_SSSE3 | X265_CPU_SSE4)));
             }
             /* Detect Atom CPU */
             else if (model == 28) {
-                cpu |= X264_CPU_SLOW_ATOM;
-                cpu |= X264_CPU_SLOW_CTZ;
-                cpu |= X264_CPU_SLOW_PSHUFB;
+                cpu |= X265_CPU_SLOW_ATOM;
+                cpu |= X265_CPU_SLOW_CTZ;
+                cpu |= X265_CPU_SLOW_PSHUFB;
             }
             /* Conroe has a slow shuffle unit. Check the model number to make sure not
              * to include crippled low-end Penryns and Nehalems that don't have SSE4. */
-            else if ((cpu & X264_CPU_SSSE3) && !(cpu & X264_CPU_SSE4) && model < 23)
-                cpu |= X264_CPU_SLOW_SHUFFLE;
+            else if ((cpu & X265_CPU_SSSE3) && !(cpu & X265_CPU_SSE4) && model < 23)
+                cpu |= X265_CPU_SLOW_SHUFFLE;
         }
     }
 
-    if ((!strcmp((char *)vendor, "GenuineIntel") || !strcmp((char *)vendor, "CyrixInstead")) && !(cpu & X264_CPU_SSE42)) {
+    if ((!strcmp((char *)vendor, "GenuineIntel") || !strcmp((char *)vendor, "CyrixInstead")) && !(cpu & X265_CPU_SSE42)) {
         /* cacheline size is specified in 3 places, any of which may be missing */
         mvtools_cpu_cpuid(1, &eax, &ebx, &ecx, &edx);
         cache = (ebx & 0xff00) >> 5; // cflush size
@@ -181,11 +181,11 @@ uint32_t cpu_detect(void) {
         }
 
         if (cache == 32)
-            cpu |= X264_CPU_CACHELINE_32;
+            cpu |= X265_CPU_CACHELINE_32;
         else if (cache == 64)
-            cpu |= X264_CPU_CACHELINE_64;
+            cpu |= X265_CPU_CACHELINE_64;
         //else
-        //    x264_log( NULL, X264_LOG_WARNING, "unable to determine cacheline size\n" );
+        //    x265_log( NULL, X265_LOG_WARNING, "unable to determine cacheline size\n" );
     }
 
     return cpu;
