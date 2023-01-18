@@ -270,52 +270,143 @@ MK_CFUNC(mvtools_pixel_sad_8x8_cache64_mmx2);
 MK_CFUNC(mvtools_pixel_sad_8x16_cache64_mmx2);
 
 MK_CFUNC(mvtools_pixel_sad_8x16_sse2);
+MK_CFUNC(mvtools_pixel_sad_16x4_sse2);
 MK_CFUNC(mvtools_pixel_sad_16x8_sse2);  //non optimized cache access, for AMD?
 MK_CFUNC(mvtools_pixel_sad_16x16_sse2); //non optimized cache access, for AMD?
+MK_CFUNC(mvtools_pixel_sad_16x32_sse2);
+MK_CFUNC(mvtools_pixel_sad_32x8_sse2);
+MK_CFUNC(mvtools_pixel_sad_32x16_sse2);
+MK_CFUNC(mvtools_pixel_sad_32x32_sse2);
+MK_CFUNC(mvtools_pixel_sad_32x64_sse2);
+MK_CFUNC(mvtools_pixel_sad_64x16_sse2);
+MK_CFUNC(mvtools_pixel_sad_64x32_sse2);
+MK_CFUNC(mvtools_pixel_sad_64x64_sse2);
 
+MK_CFUNC(mvtools_pixel_sad_16x4_sse3);
 MK_CFUNC(mvtools_pixel_sad_16x8_sse3);  //LDDQU Pentium4E (Core1?), not for Core2!
 MK_CFUNC(mvtools_pixel_sad_16x16_sse3); //LDDQU Pentium4E (Core1?), not for Core2!
+MK_CFUNC(mvtools_pixel_sad_16x32_sse3);
+MK_CFUNC(mvtools_pixel_sad_32x8_sse3);
+MK_CFUNC(mvtools_pixel_sad_32x16_sse3);
+MK_CFUNC(mvtools_pixel_sad_32x32_sse3);
+MK_CFUNC(mvtools_pixel_sad_32x64_sse3);
+MK_CFUNC(mvtools_pixel_sad_64x16_sse3);
+MK_CFUNC(mvtools_pixel_sad_64x32_sse3);
+MK_CFUNC(mvtools_pixel_sad_64x64_sse3);
 
 MK_CFUNC(mvtools_pixel_sad_16x8_cache64_ssse3);  //core2 optimized
 MK_CFUNC(mvtools_pixel_sad_16x16_cache64_ssse3); //core2 optimized
+
+MK_CFUNC(mvtools_pixel_sad_32x8_avx2);
+MK_CFUNC(mvtools_pixel_sad_32x16_avx2);
+MK_CFUNC(mvtools_pixel_sad_32x32_avx2);
+MK_CFUNC(mvtools_pixel_sad_32x64_avx2);
+MK_CFUNC(mvtools_pixel_sad_64x16_avx2);
+MK_CFUNC(mvtools_pixel_sad_64x32_avx2);
+MK_CFUNC(mvtools_pixel_sad_64x64_avx2);
 
 /* SATD: Sum of Absolute Transformed Differences, more sensitive to noise, frequency domain based - replacement to dct/SAD */
 
 // From sad-a.asm - stolen from x264
 MK_CFUNC(mvtools_pixel_satd_4x4_mmx2);
 
+MK_CFUNC(mvtools_pixel_satd_4x8_sse2);
 MK_CFUNC(mvtools_pixel_satd_8x4_sse2);
 MK_CFUNC(mvtools_pixel_satd_8x8_sse2);
+MK_CFUNC(mvtools_pixel_satd_8x16_sse2);
+MK_CFUNC(mvtools_pixel_satd_16x4_sse2);
 MK_CFUNC(mvtools_pixel_satd_16x8_sse2);
 MK_CFUNC(mvtools_pixel_satd_16x16_sse2);
+MK_CFUNC(mvtools_pixel_satd_16x32_sse2);
+MK_CFUNC(mvtools_pixel_satd_32x8_sse2);
+MK_CFUNC(mvtools_pixel_satd_32x16_sse2);
+MK_CFUNC(mvtools_pixel_satd_32x32_sse2);
+MK_CFUNC(mvtools_pixel_satd_32x64_sse2);
+MK_CFUNC(mvtools_pixel_satd_64x16_sse2);
+MK_CFUNC(mvtools_pixel_satd_64x32_sse2);
+MK_CFUNC(mvtools_pixel_satd_64x64_sse2);
 
 MK_CFUNC(mvtools_pixel_satd_4x4_ssse3);
+MK_CFUNC(mvtools_pixel_satd_4x8_ssse3);
+MK_CFUNC(mvtools_pixel_satd_4x16_ssse3);
 MK_CFUNC(mvtools_pixel_satd_8x4_ssse3);
 MK_CFUNC(mvtools_pixel_satd_8x8_ssse3);
+MK_CFUNC(mvtools_pixel_satd_8x16_ssse3);
+MK_CFUNC(mvtools_pixel_satd_16x4_ssse3);
 MK_CFUNC(mvtools_pixel_satd_16x8_ssse3);
 MK_CFUNC(mvtools_pixel_satd_16x16_ssse3);
+MK_CFUNC(mvtools_pixel_satd_32x8_ssse3);
+MK_CFUNC(mvtools_pixel_satd_32x16_ssse3);
+MK_CFUNC(mvtools_pixel_satd_32x32_ssse3);
+MK_CFUNC(mvtools_pixel_satd_32x64_ssse3);
+MK_CFUNC(mvtools_pixel_satd_64x16_ssse3);
+MK_CFUNC(mvtools_pixel_satd_64x32_ssse3);
+MK_CFUNC(mvtools_pixel_satd_64x64_ssse3);
 
 MK_CFUNC(mvtools_pixel_satd_4x4_sse4);
+MK_CFUNC(mvtools_pixel_satd_4x8_sse4);
 MK_CFUNC(mvtools_pixel_satd_8x4_sse4);
 MK_CFUNC(mvtools_pixel_satd_8x8_sse4);
+MK_CFUNC(mvtools_pixel_satd_8x16_sse4);
+MK_CFUNC(mvtools_pixel_satd_16x4_sse4);
 MK_CFUNC(mvtools_pixel_satd_16x8_sse4);
 MK_CFUNC(mvtools_pixel_satd_16x16_sse4);
+MK_CFUNC(mvtools_pixel_satd_16x32_sse4);
+MK_CFUNC(mvtools_pixel_satd_32x8_sse4);
+MK_CFUNC(mvtools_pixel_satd_32x16_sse4);
+MK_CFUNC(mvtools_pixel_satd_32x32_sse4);
+MK_CFUNC(mvtools_pixel_satd_32x64_sse4);
+MK_CFUNC(mvtools_pixel_satd_64x16_sse4);
+MK_CFUNC(mvtools_pixel_satd_64x32_sse4);
+MK_CFUNC(mvtools_pixel_satd_64x64_sse4);
 
 MK_CFUNC(mvtools_pixel_satd_4x4_avx);
+MK_CFUNC(mvtools_pixel_satd_4x8_avx);
 MK_CFUNC(mvtools_pixel_satd_8x4_avx);
 MK_CFUNC(mvtools_pixel_satd_8x8_avx);
+MK_CFUNC(mvtools_pixel_satd_8x16_avx);
+MK_CFUNC(mvtools_pixel_satd_16x4_avx);
 MK_CFUNC(mvtools_pixel_satd_16x8_avx);
 MK_CFUNC(mvtools_pixel_satd_16x16_avx);
+MK_CFUNC(mvtools_pixel_satd_16x32_avx);
+MK_CFUNC(mvtools_pixel_satd_32x8_avx);
+MK_CFUNC(mvtools_pixel_satd_32x16_avx);
+MK_CFUNC(mvtools_pixel_satd_32x32_avx);
+MK_CFUNC(mvtools_pixel_satd_32x64_avx);
+MK_CFUNC(mvtools_pixel_satd_64x16_avx);
+MK_CFUNC(mvtools_pixel_satd_64x32_avx);
+MK_CFUNC(mvtools_pixel_satd_64x64_avx);
 
 MK_CFUNC(mvtools_pixel_satd_4x4_xop);
+MK_CFUNC(mvtools_pixel_satd_4x8_xop);
 MK_CFUNC(mvtools_pixel_satd_8x4_xop);
 MK_CFUNC(mvtools_pixel_satd_8x8_xop);
+MK_CFUNC(mvtools_pixel_satd_8x16_xop);
+MK_CFUNC(mvtools_pixel_satd_16x4_xop);
 MK_CFUNC(mvtools_pixel_satd_16x8_xop);
 MK_CFUNC(mvtools_pixel_satd_16x16_xop);
+MK_CFUNC(mvtools_pixel_satd_16x32_xop);
+MK_CFUNC(mvtools_pixel_satd_32x8_xop);
+MK_CFUNC(mvtools_pixel_satd_32x16_xop);
+MK_CFUNC(mvtools_pixel_satd_32x32_xop);
+MK_CFUNC(mvtools_pixel_satd_32x64_xop);
+MK_CFUNC(mvtools_pixel_satd_64x16_xop);
+MK_CFUNC(mvtools_pixel_satd_64x32_xop);
+MK_CFUNC(mvtools_pixel_satd_64x64_xop);
 
 MK_CFUNC(mvtools_pixel_satd_8x8_avx2);
+MK_CFUNC(mvtools_pixel_satd_8x16_avx2);
+MK_CFUNC(mvtools_pixel_satd_16x4_avx2);
 MK_CFUNC(mvtools_pixel_satd_16x8_avx2);
 MK_CFUNC(mvtools_pixel_satd_16x16_avx2);
+MK_CFUNC(mvtools_pixel_satd_16x32_avx2);
+MK_CFUNC(mvtools_pixel_satd_32x8_avx2);
+MK_CFUNC(mvtools_pixel_satd_32x16_avx2);
+MK_CFUNC(mvtools_pixel_satd_32x32_avx2);
+MK_CFUNC(mvtools_pixel_satd_32x64_avx2);
+MK_CFUNC(mvtools_pixel_satd_64x16_avx2);
+MK_CFUNC(mvtools_pixel_satd_64x32_avx2);
+MK_CFUNC(mvtools_pixel_satd_64x64_avx2);
 
 #undef MK_CFUNC
 
@@ -358,6 +449,9 @@ unsigned int sad_c(const uint8_t *pSrc8, intptr_t nSrcPitch, const uint8_t *pRef
 #define SAD_X265_U8_SSSE3_CACHE64(width, height) \
     { KEY(width, height, 8, SSSE3_CACHE64), mvtools_pixel_sad_##width##x##height##_cache64_ssse3 },
 
+#define SAD_X265_U8_AVX2(width, height) \
+    { KEY(width, height, 8, AVX2), mvtools_pixel_sad_##width##x##height##_avx2 },
+
 #define SAD_U8_SSE2(width, height) \
     { KEY(width, height, 8, SSE2), SADWrapperU8<width, height>::sad_u8_sse2 },
 
@@ -369,6 +463,7 @@ unsigned int sad_c(const uint8_t *pSrc8, intptr_t nSrcPitch, const uint8_t *pRef
 #define SAD_X265_U8_SSE2(width, height)
 #define SAD_X265_U8_SSE3(width, height)
 #define SAD_X265_U8_SSSE3_CACHE64(width, height)
+#define SAD_X265_U8_AVX2(width, height)
 #define SAD_U8_SSE2(width, height)
 #define SAD_U16_SSE2(width, height)
 #endif
@@ -407,12 +502,39 @@ static const std::unordered_map<uint32_t, SADFunction> sad_functions = {
     SAD(128, 128)
     SAD_X265_U8_MMX(4, 4)
     SAD_X265_U8_MMX(4, 8)
+    SAD_X265_U8_SSE2(8, 16)
+    SAD_X265_U8_SSE2(16, 4)
     SAD_X265_U8_SSE2(16, 8)
     SAD_X265_U8_SSE2(16, 16)
+    SAD_X265_U8_SSE2(16, 32)
+    SAD_X265_U8_SSE2(32, 8)
+    SAD_X265_U8_SSE2(32, 16)
+    SAD_X265_U8_SSE2(32, 32)
+    SAD_X265_U8_SSE2(32, 64)
+    SAD_X265_U8_SSE2(64, 16)
+    SAD_X265_U8_SSE2(64, 32)
+    SAD_X265_U8_SSE2(64, 64)
+    SAD_X265_U8_SSE3(16, 4)
     SAD_X265_U8_SSE3(16, 8)
     SAD_X265_U8_SSE3(16, 16)
+    SAD_X265_U8_SSE3(16, 32)
+    SAD_X265_U8_SSE3(32, 8)
+    SAD_X265_U8_SSE3(32, 16)
+    SAD_X265_U8_SSE3(32, 32)
+    SAD_X265_U8_SSE3(32, 64)
+    SAD_X265_U8_SSE3(64, 16)
+    SAD_X265_U8_SSE3(64, 32)
+    SAD_X265_U8_SSE3(64, 64)
     SAD_X265_U8_SSSE3_CACHE64(16, 8)
     SAD_X265_U8_SSSE3_CACHE64(16, 16)
+    SAD_X265_U8_AVX2(32, 8)
+    SAD_X265_U8_AVX2(32, 16)
+    SAD_X265_U8_AVX2(32, 32)
+    SAD_X265_U8_AVX2(32, 64)
+    // The intrinsics version may be slightly faster with 64 blocksize
+    // SAD_X265_U8_AVX2(64, 16)
+    // SAD_X265_U8_AVX2(64, 32)
+    // SAD_X265_U8_AVX2(64, 64)
     SAD_U8_SSE2(4, 2)
     SAD_U8_SSE2(8, 1)
     SAD_U8_SSE2(8, 2)
@@ -420,15 +542,15 @@ static const std::unordered_map<uint32_t, SADFunction> sad_functions = {
     SAD_U8_SSE2(8, 8)
     SAD_U8_SSE2(16, 1)
     SAD_U8_SSE2(16, 2)
-    SAD_U8_SSE2(16, 4)
-    SAD_U8_SSE2(16, 32)
-    SAD_U8_SSE2(32, 8)
-    SAD_U8_SSE2(32, 16)
-    SAD_U8_SSE2(32, 32)
-    SAD_U8_SSE2(32, 64)
-    SAD_U8_SSE2(64, 16)
-    SAD_U8_SSE2(64, 32)
-    SAD_U8_SSE2(64, 64)
+    // SAD_U8_SSE2(16, 4)
+    // SAD_U8_SSE2(16, 32)
+    // SAD_U8_SSE2(32, 8)
+    // SAD_U8_SSE2(32, 16)
+    // SAD_U8_SSE2(32, 32)
+    // SAD_U8_SSE2(32, 64)
+    // SAD_U8_SSE2(64, 16)
+    // SAD_U8_SSE2(64, 32)
+    // SAD_U8_SSE2(64, 64)
     SAD_U8_SSE2(64, 128)
     SAD_U8_SSE2(128, 32)
     SAD_U8_SSE2(128, 64)
@@ -497,6 +619,11 @@ SADFunction selectSADFunction(unsigned width, unsigned height, unsigned bits, in
             SADFunction tmp = selectSADFunctionAVX2(width, height, bits);
             if (tmp)
                 sad = tmp;
+
+            // Attempt to use x265 AVX2 asm for supported blocksizes
+            try {
+                sad = sad_functions.at(KEY(width, height, bits, AVX2));
+            } catch (std::out_of_range &) { }
         }
     }
 #endif
@@ -509,6 +636,7 @@ SADFunction selectSADFunction(unsigned width, unsigned height, unsigned bits, in
 #undef SAD_X265_U8_SSE2
 #undef SAD_X265_U8_SSE3
 #undef SAD_X265_U8_SSSE3_CACHE64
+#undef SAD_X265_U8_AVX2
 #undef SAD_U8_SSE2
 #undef SAD_U16_SSE2
 #undef SAD
