@@ -10,7 +10,7 @@
 
 typedef struct MVSuperData {
     VSNode *node;
-    VSVideoInfo *vi;
+    VSVideoInfo vi;
 
     VSNode *pelclip; // upsized source clip with doubled frame width and heigth (used for pel=2)
 
@@ -61,9 +61,9 @@ static const VSFrame *VS_CC mvsuperGetFrame(int n, int activationReason, void *i
         if (d->usePelClip)
             srcPel = vsapi->getFrameFilter(n, d->pelclip, frameCtx);
 
-        VSFrame *dst = vsapi->newVideoFrame(&d->vi->format, d->vi->width, d->vi->height, src, core);
+        VSFrame *dst = vsapi->newVideoFrame(&d->vi.format, d->vi.width, d->vi.height, src, core);
 
-        for (int plane = 0; plane < d->vi->format.numPlanes; plane++) {
+        for (int plane = 0; plane < d->vi.format.numPlanes; plane++) {
             pSrc[plane] = vsapi->getReadPtr(src, plane);
             nSrcPitch[plane] = vsapi->getStride(src, plane);
 
@@ -74,13 +74,13 @@ static const VSFrame *VS_CC mvsuperGetFrame(int n, int activationReason, void *i
         }
 
         MVGroupOfFrames pSrcGOF;
-        mvgofInit(&pSrcGOF, d->nLevels, d->nWidth, d->nHeight, d->nPel, d->nHPad, d->nVPad, d->nModeYUV, d->opt, d->xRatioUV, d->yRatioUV, d->vi->format.bitsPerSample);
+        mvgofInit(&pSrcGOF, d->nLevels, d->nWidth, d->nHeight, d->nPel, d->nHPad, d->nVPad, d->nModeYUV, d->opt, d->xRatioUV, d->yRatioUV, d->vi.format.bitsPerSample);
 
         mvgofUpdate(&pSrcGOF, pDst, nDstPitch);
 
         MVPlaneSet planes[3] = { YPLANE, UPLANE, VPLANE };
 
-        for (int plane = 0; plane < d->vi->format.numPlanes; plane++)
+        for (int plane = 0; plane < d->vi.format.numPlanes; plane++)
             mvfFillPlane(pSrcGOF.frames[0], pSrc[plane], nSrcPitch[plane], plane);
 
         mvgofReduce(&pSrcGOF, d->nModeYUV, d->rfilter);
@@ -89,7 +89,7 @@ static const VSFrame *VS_CC mvsuperGetFrame(int n, int activationReason, void *i
         if (d->usePelClip) {
             MVFrame *srcFrames = pSrcGOF.frames[0];
 
-            for (int plane = 0; plane < d->vi->format.numPlanes; plane++) {
+            for (int plane = 0; plane < d->vi.format.numPlanes; plane++) {
                 pSrcPel[plane] = vsapi->getReadPtr(srcPel, plane);
                 nSrcPelPitch[plane] = vsapi->getStride(srcPel, plane);
 
@@ -194,31 +194,30 @@ static void VS_CC mvsuperCreate(const VSMap *in, VSMap *out, void *userData, VSC
 
     // Make a copy of the video info, so we can reference
     // it and modify it below.
-    VSVideoInfo vi = *vsapi->getVideoInfo(d.node);
-    d.vi = &vi;
+    d.vi = *vsapi->getVideoInfo(d.node);
 
-    d.nWidth = d.vi->width;
-    d.nHeight = d.vi->height;
+    d.nWidth = d.vi.width;
+    d.nHeight = d.vi.height;
 
-    if (!vsh_isConstantVideoFormat(d.vi) || d.vi->format.bitsPerSample > 16 || d.vi->format.sampleType != stInteger ||
-            d.vi->format.subSamplingW > 1 || d.vi->format.subSamplingH > 1 || (d.vi->format.colorFamily != cfYUV && d.vi->format.colorFamily != cfGray)) {
+    if (!vsh_isConstantVideoFormat(&d.vi) || d.vi.format.bitsPerSample > 16 || d.vi.format.sampleType != stInteger ||
+            d.vi.format.subSamplingW > 1 || d.vi.format.subSamplingH > 1 || (d.vi.format.colorFamily != cfYUV && d.vi.format.colorFamily != cfGray)) {
         vsapi->mapSetError(out, "Super: input clip must be GRAY, 420, 422, 440, or 444, up to 16 bits, with constant dimensions.");
         vsapi->freeNode(d.node);
         return;
     }
 
-    if (d.vi->format.colorFamily == cfGray)
+    if (d.vi.format.colorFamily == cfGray)
         d.chroma = 0;
 
     d.nModeYUV = d.chroma ? YUVPLANES : YPLANE;
 
 
-    d.xRatioUV = 1 << d.vi->format.subSamplingW;
-    d.yRatioUV = 1 << d.vi->format.subSamplingH;
+    d.xRatioUV = 1 << d.vi.format.subSamplingW;
+    d.yRatioUV = 1 << d.vi.format.subSamplingH;
 
     int nLevelsMax = 0;
-    while (PlaneHeightLuma(d.vi->height, nLevelsMax, d.yRatioUV, d.nVPad) >= d.yRatioUV * 2 &&
-           PlaneWidthLuma(d.vi->width, nLevelsMax, d.xRatioUV, d.nHPad) >= d.xRatioUV * 2) // at last two pixels width and height of chroma
+    while (PlaneHeightLuma(d.vi.height, nLevelsMax, d.yRatioUV, d.nVPad) >= d.yRatioUV * 2 &&
+           PlaneWidthLuma(d.vi.width, nLevelsMax, d.xRatioUV, d.nHPad) >= d.xRatioUV * 2) // at last two pixels width and height of chroma
     {
         nLevelsMax++;
     }
@@ -228,7 +227,7 @@ static void VS_CC mvsuperCreate(const VSMap *in, VSMap *out, void *userData, VSC
     d.pelclip = vsapi->mapGetNode(in, "pelclip", 0, &err);
     const VSVideoInfo *pelvi = d.pelclip ? vsapi->getVideoInfo(d.pelclip) : NULL;
 
-    if (d.pelclip && (!vsh_isConstantVideoFormat(pelvi) || vsh_isSameVideoFormat(&pelvi->format, &d.vi->format))) {
+    if (d.pelclip && (!vsh_isConstantVideoFormat(pelvi) || vsh_isSameVideoFormat(&pelvi->format, &d.vi.format))) {
         vsapi->mapSetError(out, "Super: pelclip must have the same format as the input clip, and it must have constant dimensions.");
         vsapi->freeNode(d.node);
         vsapi->freeNode(d.pelclip);
@@ -237,12 +236,12 @@ static void VS_CC mvsuperCreate(const VSMap *in, VSMap *out, void *userData, VSC
 
     d.usePelClip = 0;
     if (d.pelclip && (d.nPel >= 2)) {
-        if ((pelvi->width == d.vi->width * d.nPel) &&
-            (pelvi->height == d.vi->height * d.nPel)) {
+        if ((pelvi->width == d.vi.width * d.nPel) &&
+            (pelvi->height == d.vi.height * d.nPel)) {
             d.usePelClip = 1;
             d.isPelClipPadded = 0;
-        } else if ((pelvi->width == (d.vi->width + d.nHPad * 2) * d.nPel) &&
-                   (pelvi->height == (d.vi->height + d.nVPad * 2) * d.nPel)) {
+        } else if ((pelvi->width == (d.vi.width + d.nHPad * 2) * d.nPel) &&
+                   (pelvi->height == (d.vi.height + d.nVPad * 2) * d.nPel)) {
             d.usePelClip = 1;
             d.isPelClipPadded = 1;
         } else {
@@ -259,8 +258,8 @@ static void VS_CC mvsuperCreate(const VSMap *in, VSMap *out, void *userData, VSC
         d.nSuperHeight++; // even
     if (d.xRatioUV == 2 && d.nSuperWidth & 1)
         d.nSuperWidth++;
-    d.vi->width = d.nSuperWidth;
-    d.vi->height = d.nSuperHeight;
+    d.vi.width = d.nSuperWidth;
+    d.vi.height = d.nSuperHeight;
 
 
     data = (MVSuperData *)malloc(sizeof(d));
@@ -270,7 +269,7 @@ static void VS_CC mvsuperCreate(const VSMap *in, VSMap *out, void *userData, VSC
         {data->node, rpGeneral}
     };
 
-    vsapi->createVideoFilter(out, "Super", data->vi, mvsuperGetFrame, mvsuperFree, fmParallel, deps, 1, data, core);
+    vsapi->createVideoFilter(out, "Super", &data->vi, mvsuperGetFrame, mvsuperFree, fmParallel, deps, 1, data, core);
 }
 
 
@@ -284,7 +283,7 @@ void mvsuperRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi) {
                  "chroma:int:opt;"
                  "sharp:int:opt;"
                  "rfilter:int:opt;"
-                 "pelclip:clip:opt;"
+                 "pelclip:vnode:opt;"
                  "opt:int:opt;",
                  "clip:vnode;",
                  mvsuperCreate, 0, plugin);
