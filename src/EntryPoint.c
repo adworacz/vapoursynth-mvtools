@@ -8,7 +8,7 @@
 
 
 void mvsuperRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);
-/*void mvanalyseRegister(VSRegisterFunction registerFunc, VSPlugin *plugin);*/
+void mvanalyseRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);
 /*void mvdegrainsRegister(VSRegisterFunction registerFunc, VSPlugin *plugin);*/
 /*void mvcompensateRegister(VSRegisterFunction registerFunc, VSPlugin *plugin);*/
 /*void mvrecalculateRegister(VSRegisterFunction registerFunc, VSPlugin *plugin);*/
@@ -25,17 +25,14 @@ void mvsuperRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);
 
 uint32_t g_cpuinfo = 0;
 
-
-//TODO: Update this.
 VS_EXTERNAL_API(void)
-/*VapourSynthPluginInit(VSConfigPlugin configFunc, VSRegisterFunction registerFunc, VSPlugin *plugin) {*/
 VapourSynthPluginInit2(VSPlugin *plugin, const VSPLUGINAPI *vspapi) {
     const int packageVersion = atoi(PACKAGE_VERSION);
 
     vspapi->configPlugin("com.nodame.mvtools", "mv", "MVTools v" PACKAGE_VERSION, VS_MAKE_VERSION(packageVersion, 0), VS_MAKE_VERSION(VAPOURSYNTH_API_MAJOR, VAPOURSYNTH_API_MINOR), 0, plugin);
 
     mvsuperRegister(plugin, vspapi);
-    /*mvanalyseRegister(registerFunc, plugin);*/
+    mvanalyseRegister(plugin, vspapi);
     /*mvdegrainsRegister(registerFunc, plugin);*/
     /*mvcompensateRegister(registerFunc, plugin);*/
     /*mvrecalculateRegister(registerFunc, plugin);*/
