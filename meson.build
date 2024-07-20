@@ -46,7 +46,7 @@ sources = [
   'src/MVAnalysisData.c',
   # 'src/MVBlockFPS.c',
   # 'src/MVCompensate.c',
-  # 'src/MVDegrains.cpp',
+  'src/MVDegrains.cpp',
   # 'src/MVDepan.cpp',
   # 'src/MVFinest.c',
   # 'src/MVFlow.cpp',
