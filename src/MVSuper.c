@@ -266,7 +266,7 @@ static void VS_CC mvsuperCreate(const VSMap *in, VSMap *out, void *userData, VSC
     *data = d;
 
     VSFilterDependency deps[1] = { 
-        {data->node, rpGeneral}
+        {data->node, rpStrictSpatial}
     };
 
     vsapi->createVideoFilter(out, "Super", &data->vi, mvsuperGetFrame, mvsuperFree, fmParallel, deps, 1, data, core);

@@ -787,7 +787,7 @@ static void VS_CC mvdegrainCreate(const VSMap *in, VSMap *out, void *userData, V
 
     const int numDeps = 2 + radius; // input clip, super, and corresponding backward and forward vectors.
     VSFilterDependency deps[14] = { 
-        {data->node, rpGeneral},
+        {data->node, rpStrictSpatial},
         {data->super, rpGeneral},
         {data->vectors[0], rpGeneral},
         {data->vectors[1], rpGeneral},
