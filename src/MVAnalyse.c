@@ -627,7 +627,7 @@ static void VS_CC mvanalyseCreate(const VSMap *in, VSMap *out, void *userData, V
     *data = d;
 
     VSFilterDependency deps[1] = { 
-        {data->node, rpGeneral}
+        {data->node, rpGeneral} //super
     };
 
     vsapi->createVideoFilter(out, "Analyse", data->vi, mvanalyseGetFrame, mvanalyseFree, fmParallel, deps, 1, data, core);
