@@ -14,13 +14,13 @@ void mvcompensateRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);
 void mvrecalculateRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);
 void mvmaskRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);
 void mvfinestRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);
-/*void mvflowRegister(VSRegisterFunction registerFunc, VSPlugin *plugin);*/
-/*void mvflowblurRegister(VSRegisterFunction registerFunc, VSPlugin *plugin);*/
-/*void mvflowinterRegister(VSRegisterFunction registerFunc, VSPlugin *plugin);*/
-/*void mvflowfpsRegister(VSRegisterFunction registerFunc, VSPlugin *plugin);*/
-/*void mvblockfpsRegister(VSRegisterFunction registerFunc, VSPlugin *plugin);*/
-/*void mvscdetectionRegister(VSRegisterFunction registerFunc, VSPlugin *plugin);*/
-/*void mvdepanRegister(VSRegisterFunction registerFunc, VSPlugin *plugin);*/
+void mvflowRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);
+/*void mvflowblurRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);*/
+/*void mvflowinterRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);*/
+/*void mvflowfpsRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);*/
+/*void mvblockfpsRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);*/
+/*void mvscdetectionRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);*/
+/*void mvdepanRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);*/
 
 
 uint32_t g_cpuinfo = 0;
@@ -38,13 +38,13 @@ VapourSynthPluginInit2(VSPlugin *plugin, const VSPLUGINAPI *vspapi) {
     mvrecalculateRegister(plugin, vspapi);
     mvmaskRegister(plugin, vspapi);
     mvfinestRegister(plugin, vspapi);
-    /*mvflowRegister(registerFunc, plugin);*/
-    /*mvflowblurRegister(registerFunc, plugin);*/
-    /*mvflowinterRegister(registerFunc, plugin);*/
-    /*mvflowfpsRegister(registerFunc, plugin);*/
-    /*mvblockfpsRegister(registerFunc, plugin);*/
-    /*mvscdetectionRegister(registerFunc, plugin);*/
-    /*mvdepanRegister(registerFunc, plugin);*/
+    mvflowRegister(plugin, vspapi);
+    /*mvflowblurRegister(plugin, vspapi);*/
+    /*mvflowinterRegister(plugin, vspapi);*/
+    /*mvflowfpsRegister(plugin, vspapi);*/
+    /*mvblockfpsRegister(plugin, vspapi);*/
+    /*mvscdetectionRegister(plugin, vspapi);*/
+    /*mvdepanRegister(plugin, vspapi);*/
 
     g_cpuinfo = cpu_detect();
 }

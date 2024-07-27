@@ -49,7 +49,7 @@ sources = [
   'src/MVDegrains.cpp',
   # 'src/MVDepan.cpp',
   'src/MVFinest.c',
-  # 'src/MVFlow.cpp',
+  'src/MVFlow.cpp',
   # 'src/MVFlowBlur.c',
   # 'src/MVFlowFPS.c',
   # 'src/MVFlowFPSHelper.c',
