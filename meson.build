@@ -55,7 +55,7 @@ sources = [
   # 'src/MVFlowFPSHelper.c',
   # 'src/MVFlowInter.c',
   'src/MVFrame.cpp',
-  # 'src/MVMask.c',
+  'src/MVMask.c',
   'src/MVRecalculate.c',
   # 'src/MVSCDetection.c',
   'src/MVSuper.c',
