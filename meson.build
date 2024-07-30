@@ -50,7 +50,7 @@ sources = [
   # 'src/MVDepan.cpp',
   'src/MVFinest.c',
   'src/MVFlow.cpp',
-  # 'src/MVFlowBlur.c',
+  'src/MVFlowBlur.c',
   # 'src/MVFlowFPS.c',
   # 'src/MVFlowFPSHelper.c',
   # 'src/MVFlowInter.c',
