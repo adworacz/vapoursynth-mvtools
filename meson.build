@@ -53,7 +53,7 @@ sources = [
   'src/MVFlowBlur.c',
   # 'src/MVFlowFPS.c',
   # 'src/MVFlowFPSHelper.c',
-  # 'src/MVFlowInter.c',
+  'src/MVFlowInter.c',
   'src/MVFrame.cpp',
   'src/MVMask.c',
   'src/MVRecalculate.c',

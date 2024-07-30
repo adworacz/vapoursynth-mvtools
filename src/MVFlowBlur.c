@@ -538,7 +538,7 @@ static void VS_CC mvflowblurCreate(const VSMap *in, VSMap *out, void *userData, 
 
     VSFilterDependency deps[4] = { 
         {data->node, rpStrictSpatial}, 
-        // {data->super, rpStrictSpatial}, //MVFlow doesn't actually request any frames from the super.
+        // {data->super, rpStrictSpatial}, //MVFlowBlur doesn't actually request any frames from the super.
         {data->finest, rpStrictSpatial}, 
         {data->mvbw, rpGeneral}, 
         {data->mvfw, rpGeneral}, 
