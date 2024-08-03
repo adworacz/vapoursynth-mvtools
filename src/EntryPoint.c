@@ -17,7 +17,7 @@ void mvfinestRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);
 void mvflowRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);
 void mvflowblurRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);
 void mvflowinterRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);
-/*void mvflowfpsRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);*/
+void mvflowfpsRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);
 /*void mvblockfpsRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);*/
 /*void mvscdetectionRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);*/
 /*void mvdepanRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);*/
@@ -41,7 +41,7 @@ VapourSynthPluginInit2(VSPlugin *plugin, const VSPLUGINAPI *vspapi) {
     mvflowRegister(plugin, vspapi);
     mvflowblurRegister(plugin, vspapi);
     mvflowinterRegister(plugin, vspapi);
-    /*mvflowfpsRegister(plugin, vspapi);*/
+    mvflowfpsRegister(plugin, vspapi);
     /*mvblockfpsRegister(plugin, vspapi);*/
     /*mvscdetectionRegister(plugin, vspapi);*/
     /*mvdepanRegister(plugin, vspapi);*/
