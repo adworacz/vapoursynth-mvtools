@@ -20,7 +20,7 @@ void mvflowinterRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);
 void mvflowfpsRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);
 void mvblockfpsRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);
 void mvscdetectionRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);
-/*void mvdepanRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);*/
+void mvdepanRegister(VSPlugin *plugin, const VSPLUGINAPI *vspapi);
 
 
 uint32_t g_cpuinfo = 0;
@@ -44,7 +44,7 @@ VapourSynthPluginInit2(VSPlugin *plugin, const VSPLUGINAPI *vspapi) {
     mvflowfpsRegister(plugin, vspapi);
     mvblockfpsRegister(plugin, vspapi);
     mvscdetectionRegister(plugin, vspapi);
-    /*mvdepanRegister(plugin, vspapi);*/
+    mvdepanRegister(plugin, vspapi);
 
     g_cpuinfo = cpu_detect();
 }
