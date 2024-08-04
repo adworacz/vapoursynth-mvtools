@@ -44,7 +44,7 @@ sources = [
   'src/MaskFun.cpp',
   'src/MVAnalyse.c',
   'src/MVAnalysisData.c',
-  # 'src/MVBlockFPS.c',
+  'src/MVBlockFPS.c',
   'src/MVCompensate.c',
   'src/MVDegrains.cpp',
   # 'src/MVDepan.cpp',
