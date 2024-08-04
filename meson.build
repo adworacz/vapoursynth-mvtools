@@ -57,7 +57,7 @@ sources = [
   'src/MVFrame.cpp',
   'src/MVMask.c',
   'src/MVRecalculate.c',
-  # 'src/MVSCDetection.c',
+  'src/MVSCDetection.c',
   'src/MVSuper.c',
   'src/Overlap.cpp',
   'src/PlaneOfBlocks.cpp',
